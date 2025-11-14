@@ -1,0 +1,70 @@
+<!-- CHECKOUT.HTML --><!-- Archivo: checkout.html --><!DOCTYPE html><html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout | LATAMROT</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <style>
+    body {
+      background: #0c0c0c;
+      color: #fff;
+      font-family: Arial;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      color: #ff00e6;
+    }
+    .box {
+      background: #161616;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid #ff00e6;
+      margin-bottom: 25px;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #ff00e6;
+      border: none;
+      color: white;
+      font-size: 17px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: none;
+      background: #222;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <h2>Métodos de Pago</h2>  <!-- STRIPE TARJETAS -->  <div class="box">
+    <h3>💳 Pagar con Tarjeta (Stripe)</h3>
+    <form id="payment-form">
+      <input id="name" placeholder="Nombre en la tarjeta" required>
+      <div id="card-element" style="background: #222; padding: 12px; border-radius: 10px; margin-top: 10px;"></div>
+      <button class="btn" id="submit">Pagar</button>
+    </form>
+  </div>  <script>
+    const stripe = Stripe("TU_PUBLIC_KEY_STRIPE");
+    const elements = stripe.elements();
+    const card = elements.create("card", { hidePostalCode: true });
+    card.mount("#card-element");
+
+    const form = document.getElementById("payment-form");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: "card",
+        card: card,
+        billing_details: { name: document.getElementById("name").value }
+      });
